@@ -17,15 +17,16 @@ servername = 'Friendly_name' #Friendly name (the name you set in general setting
 account = MyPlexAccount(username, password)
 plex = account.resource(servername).connect()  # returns a PlexServer instance
 pset = plex.settings
-print(pset.all())
+#print(pset.all())
 
 setlist = ['forceAutoAdjustQuality'] #Some srsly undocumented blackmagic.
 for x in setlist:
+    print(plex.settings.get(x))
     s = plex.settings.get(x)
     plex.settings.get(x).set(True)
     s._setValue = 'true'
     s.value = True
     plex.settings.save()
-    print(plex.settings.get(x), plex.settings.get(x).value, plex.settings.get(x)._setValue)
+    print(plex.settings.get(x))#, plex.settings.get(x).value, plex.settings.get(x)._setValue)
 
-print(plex.settings.all())
+#print(plex.settings.all())
