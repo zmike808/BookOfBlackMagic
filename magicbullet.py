@@ -19,14 +19,19 @@ plex = account.resource(servername).connect()  # returns a PlexServer instance
 pset = plex.settings
 #print(pset.all())
 
-setlist = ['forceAutoAdjustQuality'] #Some srsly undocumented blackmagic.
+setlist = ['forceAutoAdjustQuality','enableAirplay','allowHighOutputBitrates'] #Some srsly undocumented blackmagic.
 for x in setlist:
-    print(plex.settings.get(x))
     s = plex.settings.get(x)
-    plex.settings.get(x).set(True)
-    s._setValue = 'true'
-    s.value = True
+    print(s)
+    print('current value for {0}: {1}'.format(x, s.value))
+    s.set(True)
+    # s._setValue = 'true'
+    # s.value = True
     plex.settings.save()
-    print(plex.settings.get(x))#, plex.settings.get(x).value, plex.settings.get(x)._setValue)
 
+confirm = account.resource(servername).connect()  # returns a PlexServer instance
+for x in setlist:
+    s = confirm.settings.get(x)
+    print('confirming value for {} was properly set...'.format(x))
+    print('current value for {0}: {1}'.format(x, s.value))
 #print(plex.settings.all())
