@@ -9,32 +9,54 @@
 
 #REQUIRES PLEXAPI: pip install plexapi (http://python-plexapi.readthedocs.io/en/latest/introduction.html)
 
-from plexapi.myplex import MyPlexAccount
+from plexapi.myplex import MyPlexAccount, PlexServer
 
+# Maybe one of these days I'll switch to YAML file for credentials like a good coder ;)
 username = 'SERVER_OWNER_USERNAME_HERE'
 password = 'REPLACE_ME'
 servername = 'Friendly_name' #Friendly name (the name you set in general settings for your server)
-account = MyPlexAccount(username, password)
-plex = account.resource(servername).connect()  # returns a PlexServer instance
-pset = plex.settings
-#print(pset.all())
 
+# set to directly connect to plex server without going through plex account auth
+baseurl = 'http://plexserver:32400' #use if you have a custom plex URL defined
+token = 'PLEX_SERVER_TOKEN'
+
+# server settings to change
+# you can probably just manually add these into Preferences.xml instead of using this script but oh well?
 settings_dict = {
     'forceAutoAdjustQuality':True,
-    'enableAirplay':True,
     'allowHighOutputBitrates':True,
-    'segmentedTranscoderTimeout':120
 } #Some srsly undocumented blackmagic.
-for x,y in settings_dict.items():
-    s = plex.settings.get(x)
-    print(s)
-    print('current value for {0}: {1}'.format(x, s.value))
-    s.set(y)
-    # s._setValue = 'true'
-    # s.value = True
-    plex.settings.save()
 
-confirm = account.resource(servername).connect()  # returns a PlexServer instance
-for x,y in settings_dict.items():
-    s = confirm.settings.get(x)
-    print('expected: {}; actual: {}'.format(y, s.value))
+
+def get_plex_server():
+    #don't try this at home kids. this is how you become a bad coder.
+    try:
+        # try using user/pass/server name first
+        return MyPlexAccount(username, password).resource(servername).connect()
+    except:
+        # fall back to using url/token to connect to server
+        return PlexServer(baseurl, token)
+
+    # Should never get here because that would mean you never changed any of the default credentials...
+    # And who would be that silly? :)
+    raise Exception("You had one job. One. Job.")
+
+def main():
+    plex = get_plex_server()
+    pset = plex.settings
+
+    for x,y in settings_dict.items():
+        s = plex.settings.get(x)
+        print(s)
+        print('current value for {0}: {1}'.format(x, s.value))
+        s.set(y)
+        plex.settings.save()
+
+    # get fresh server instance because reasons
+    confirm = get_plex_server()  # returns a PlexServer instance
+    for x,y in settings_dict.items():
+        s = confirm.settings.get(x)
+        print('{} -- expected: {} -- actual: {}'.format(x, y, s.value))
+
+if __name__ == "__main__":
+    main()
