@@ -1,3 +1,6 @@
+# UPDATE 1-6-2021:
+Check out my new work around using cloudflare workers here: https://github.com/zmike808/Plex-Blackmagic
+
 # PSA REGARDING PLEX STEALTH NERF OF _forceAutoAdjustQuality_
 
 Heads up to anyone still using this. forceAutoAdjustQuality has been countered by some really dark black magic. It 100% no longer works on plex.tv, which is really themost magical part. I went back to server version 1.13.8.5388 a month or 2 ago and I can confirm it will work on your direct domain such as plex.whyplexgottabelikethat.tears. But, like I said, that defeats the original purpose of this magical hidden setting, since it allowed friends you shared with to not have to herp derp at 2mbps default for their enitre lives. I have identified what is countering this magic however, I haven't had the time to deep dive into an attempted fix. It has to do with new headers being sent from plex.tv web clients. So, if anyone is interested in trying to fix it hit me up and I'd be willing to show you the evil headers in question. I have a general idea of how this may be fixable, but it would require having osme sort of middlelayer between plex.tv and the connection to the server maybe. I tried some basic things with nginx which yielded no results. 
